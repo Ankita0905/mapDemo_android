@@ -6,10 +6,14 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -26,10 +30,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private final int Request_code = 1;
+    private static final String tag = "MainActivity";
 
 //    LocationManager
 
@@ -142,6 +151,33 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(userLocation).title("You were Here!🤪").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,10));
+
+                    //get Address
+                    Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                    try {
+                       List<Address> addresses=  geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                       if(addresses != null && addresses.size()>0)
+                       {
+                           Log.i(tag,"onLocationResult: " + addresses.get(0));
+                           String address = "";
+                           if (addresses.get(0).getAdminArea() != null)
+                               address+=addresses.get(0).getAdminArea() + " ";
+                           if (addresses.get(0).getCountryName() != null)
+                               address+=addresses.get(0).getCountryName() + " ";
+                           if (addresses.get(0).getLocality() != null)
+                               address+=addresses.get(0).getLocality() + " ";
+                           if (addresses.get(0).getPostalCode() != null)
+                               address+=addresses.get(0).getPostalCode() + " ";
+                           if (addresses.get(0).getThoroughfare() != null)
+                               address+=addresses.get(0).getThoroughfare();
+                           Toast.makeText(MapsActivity.this, address, Toast.LENGTH_SHORT).show();
+                       }
+
+                        }
+                    catch (IOException e)
+                    {
+                       e.printStackTrace();
+                    }
                 }
             }
         };
