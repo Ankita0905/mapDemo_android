@@ -93,18 +93,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
 
-        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
-            @Override
-            public void onComplete(@NonNull Task<Location> task) {
-                if(task.isSuccessful() && task.getResult() != null)
-                {
-                    Location lastLocation = task.getResult();
-                    LatLng userLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(userLocation).title("You were Here!🤪").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,10));
-                }
-            }
-        });
+//        fusedLocationProviderClient.getLastLocation().addOnCompleteListener(this, new OnCompleteListener<Location>() {
+//            @Override
+//            public void onComplete(@NonNull Task<Location> task) {
+//                if(task.isSuccessful() && task.getResult() != null)
+//                {
+//                    Location lastLocation = task.getResult();
+//                    LatLng userLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+//                    mMap.addMarker(new MarkerOptions().position(userLocation).title("You were Here!🤪").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+//                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,10));
+//                }
+//            }
+//        });
     }
 
     private boolean checkPermission()
@@ -138,6 +138,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onLocationResult(LocationResult locationResult) {
                 for (Location location: locationResult.getLocations())
                 {
+                    mMap.clear();
                     LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     mMap.addMarker(new MarkerOptions().position(userLocation).title("You were Here!🤪").draggable(true).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation,10));
